@@ -38,7 +38,8 @@ func _on_Shoot_area_entered(area):
 
 
 func _on_VisibilityNotifier2D_screen_exited():
-	player.can_shoot = true
+	if is_instance_valid(player):
+		player.can_shoot = true
 	queue_free()
 "
 
