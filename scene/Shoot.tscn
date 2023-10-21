@@ -1,0 +1,75 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://assets/player/sprites/shot-2.png" type="Texture" id=2]
+[ext_resource path="res://assets/player/sounds/Shoot.ogg" type="AudioStream" id=3]
+[ext_resource path="res://assets/player/sprites/shot-1.png" type="Texture" id=4]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Area2D
+
+onready var player: KinematicBody2D = get_tree().get_nodes_in_group(\"player\")[0]
+
+const SPEED = 180
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	$AnimatedSprite.play()
+	$ShootSound.play()
+	player.can_shoot = false
+
+
+func _physics_process(delta):
+	position.y -= SPEED * delta
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+
+func _on_Shoot_area_entered(area):
+	if area.is_in_group(\"enemy\"):
+		queue_free()
+
+
+func _on_VisibilityNotifier2D_screen_exited():
+	player.can_shoot = true
+	queue_free()
+"
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 4 ), ExtResource( 2 ) ],
+"loop": true,
+"name": "Shoot",
+"speed": 5.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 2.5, 6 )
+
+[node name="Shoot" type="Area2D" groups=["shoot"]]
+script = SubResource( 3 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="." groups=["shoot"]]
+frames = SubResource( 1 )
+animation = "Shoot"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -0.5, 0 )
+shape = SubResource( 2 )
+
+[node name="ShootSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = -6.0
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+rect = Rect2( -3, -6, 5, 12 )
+
+[connection signal="area_entered" from="." to="." method="_on_Shoot_area_entered"]
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]

@@ -50,7 +50,7 @@ func animation_ctrol():
 		$AnimatedSprite.animation = "vertical"
 
 func shoot_ctrol():
-	var shoot = Shoot.instance()
-	shoot.global_position = $shootSpawn.global_position
-	get_tree().call_group("level", "add_child", shoot)
+	var disparo = Shoot.instance()
+	disparo.global_position = $shootSpawn.global_position
+	get_tree().call_group("level", "add_child", disparo)
 	
